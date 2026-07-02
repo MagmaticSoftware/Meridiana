@@ -1,8 +1,17 @@
 <template>
-  <div class="flex h-full w-full items-center justify-center bg-surface-950">
+  <div class="bg-surface-950 relative h-full w-full">
     <NuxtRouteAnnouncer />
-    <p class="font-display text-surface-300 text-sm tracking-wide">
-      Meridiana — setup in progress
-    </p>
+    <WidgetGrid />
+    <WakeLockBadge :mode="wakeLock.mode.value" :error="wakeLock.error.value" />
   </div>
 </template>
+
+<script setup lang="ts">
+import { onMounted } from 'vue'
+
+const wakeLock = useWakeLock()
+
+onMounted(() => {
+  wakeLock.request()
+})
+</script>
