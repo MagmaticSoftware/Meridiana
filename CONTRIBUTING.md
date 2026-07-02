@@ -75,21 +75,26 @@ export interface WidgetDefinition {
 }
 ```
 
+Register it in [`app/plugins/widgets.ts`](./app/plugins/widgets.ts), which
+runs once at app startup and imports every widget's component:
+
 ```ts
-// lib/widgets/registry.ts
-import { registerWidget } from './registry'
+// app/plugins/widgets.ts
+import { registerWidget } from '~~/lib/widgets/registry'
 import ClockWidget from '~/components/widgets/Clock/ClockWidget.vue'
 
-registerWidget({
-  id: 'clock',
-  name: 'Clock',
-  description: 'Displays the current time in flip, minimal or analog style.',
-  component: ClockWidget,
-  category: 'time',
-  defaultSize: { w: 1, h: 1 },
-  minSize: { w: 1, h: 1 },
-  maxSize: { w: 2, h: 2 },
-  settingsSchema: {/* ... */},
+export default defineNuxtPlugin(() => {
+  registerWidget({
+    id: 'clock',
+    name: 'Clock',
+    description: 'Displays the current time in flip, minimal or analog style.',
+    component: ClockWidget,
+    category: 'time',
+    defaultSize: { w: 2, h: 2 },
+    minSize: { w: 1, h: 1 },
+    maxSize: { w: 3, h: 3 },
+    settingsSchema: [/* ... */],
+  })
 })
 ```
 

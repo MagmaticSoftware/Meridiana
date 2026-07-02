@@ -12,10 +12,35 @@ export interface LayoutItem {
 }
 
 const placeholderItems: LayoutItem[] = [
-  { id: '1', widgetId: 'clock', x: 0, y: 0, w: 2, h: 1, config: {} },
-  { id: '2', widgetId: 'date', x: 2, y: 0, w: 1, h: 1, config: {} },
-  { id: '3', widgetId: 'world-clock', x: 0, y: 1, w: 2, h: 2, config: {} },
-  { id: '4', widgetId: 'weather', x: 4, y: 0, w: 2, h: 2, config: {} },
+  {
+    id: '1',
+    widgetId: 'clock',
+    x: 0,
+    y: 0,
+    w: 3,
+    h: 2,
+    config: { variant: 'minimal' },
+  },
+  {
+    id: '2',
+    widgetId: 'clock',
+    x: 3,
+    y: 0,
+    w: 3,
+    h: 2,
+    config: { variant: 'flip' },
+  },
+  {
+    id: '3',
+    widgetId: 'clock',
+    x: 0,
+    y: 2,
+    w: 2,
+    h: 2,
+    config: { variant: 'analog' },
+  },
+  { id: '4', widgetId: 'date', x: 2, y: 2, w: 1, h: 1, config: {} },
+  { id: '5', widgetId: 'weather', x: 3, y: 2, w: 3, h: 2, config: {} },
 ]
 
 export const useLayoutStore = defineStore(

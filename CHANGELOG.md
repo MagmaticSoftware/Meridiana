@@ -24,6 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Base `WidgetGrid` component rendering the persisted layout (Pinia
   `layout` store) as a CSS grid, with a dashed placeholder box for any
   layout item whose widget isn't registered yet.
+- Clock widget (`app/components/widgets/Clock`) with three styles —
+  minimal, flip and analog — registered via `app/plugins/widgets.ts` with
+  a settings schema (`variant`, `hour12`, `showSeconds`). Sizes itself via
+  CSS container queries (`[container-type:size]` + `cqw`/`cqh` units) so
+  it adapts from a small grid cell up to fullscreen.
+- `useNow` composable: a reactive `Date` updated on an interval, shared by
+  all clock styles.
 
 ### Fixed
 
@@ -34,6 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `useWakeLock` kept showing a stale native-lock error message even after
   the fallback engaged successfully; the error is now cleared once the
   fallback starts.
+- Live-clock text is now rendered inside `<ClientOnly>` to avoid an SSR
+  hydration mismatch (the server- and client-rendered timestamps could
+  land a second apart).
+- `registerWidget` no longer warns on redundant re-registration of the
+  exact same component (e.g. from Nuxt's dev-time SSR warmup) — only when
+  an id is reused by a genuinely different component.
 
 ### Changed
 

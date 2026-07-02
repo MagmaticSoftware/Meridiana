@@ -114,7 +114,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to add a new widget.
 
 - [x] Phase 0 — Project setup (Nuxt, Tailwind, Pinia, PWA, tooling)
 - [x] Phase 1 — Wake Lock, widget registry, empty grid
-- [ ] Phase 2 — Clock widget (flip / minimal / analog)
+- [x] Phase 2 — Clock widget (flip / minimal / analog)
 - [ ] Phase 3 — Background system
 - [ ] Phase 4 — Date/Calendar, World Clock, Weather (mock), Checklist widgets
 - [ ] Phase 5 — Grid editor UI (add/remove/resize/configure widgets)

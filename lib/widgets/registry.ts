@@ -4,7 +4,8 @@ import type { WidgetDefinition } from './types'
 const registry = shallowReactive(new Map<string, WidgetDefinition>())
 
 export function registerWidget(definition: WidgetDefinition): void {
-  if (registry.has(definition.id)) {
+  const existing = registry.get(definition.id)
+  if (existing && existing.component !== definition.component) {
     console.warn(
       `[widgets] "${definition.id}" is already registered, overwriting.`,
     )
