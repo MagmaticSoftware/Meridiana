@@ -1,4 +1,4 @@
-# Contributing to StandbyMode
+# Contributing to Meridiana
 
 Thanks for your interest in contributing! This project is developed in
 phases (see the roadmap in [`README.md`](./README.md)); some of the

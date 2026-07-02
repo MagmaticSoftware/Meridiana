@@ -20,7 +20,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'StandbyMode',
+      title: 'Meridiana',
       meta: [
         {
           name: 'description',
@@ -34,8 +34,8 @@ export default defineNuxtConfig({
   pwa: {
     registerType: 'autoUpdate',
     manifest: {
-      name: 'StandbyMode',
-      short_name: 'StandbyMode',
+      name: 'Meridiana',
+      short_name: 'Meridiana',
       description:
         'A calm, customizable screensaver for desktop, mobile and tablet.',
       theme_color: '#1a1a1a',

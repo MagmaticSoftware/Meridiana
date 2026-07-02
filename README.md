@@ -1,8 +1,8 @@
-# StandbyMode
+# Meridiana
 
 A calm, customizable screensaver PWA for desktop, mobile and tablet.
 
-StandbyMode keeps your screen awake and turns it into a soft, elegant
+Meridiana keeps your screen awake and turns it into a soft, elegant
 dashboard: clock, weather, calendar and other widgets laid out over a static
 background, an image gallery, or a looping video — inspired by
 [clockie.app](https://clockie.app) and Android's _StandBy Mode_, but with a
