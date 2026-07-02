@@ -1,0 +1,53 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Typography */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Warm neutral palette */
+  --color-surface-50: #fbfaf8;
+  --color-surface-100: #f4f1ec;
+  --color-surface-200: #e8e2d9;
+  --color-surface-300: #d6cdbf;
+  --color-surface-400: #b3a693;
+  --color-surface-500: #8c7c66;
+  --color-surface-600: #6b5d4a;
+  --color-surface-700: #4d4235;
+  --color-surface-800: #322a22;
+  --color-surface-900: #1c1712;
+  --color-surface-950: #100d0a;
+
+  --color-accent-100: #fbe7d7;
+  --color-accent-200: #f5c7a4;
+  --color-accent-300: #eda671;
+  --color-accent-400: #e2874a;
+  --color-accent-500: #d16b2c;
+  --color-accent-600: #ab5321;
+
+  /* Soft rounded corners */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2.25rem;
+  --radius-2xl: 3rem;
+
+  /* Diffused, delicate shadows */
+  --shadow-soft:
+    0 1px 2px rgba(16, 13, 10, 0.04), 0 8px 24px rgba(16, 13, 10, 0.08);
+  --shadow-soft-lg:
+    0 4px 12px rgba(16, 13, 10, 0.06), 0 16px 48px rgba(16, 13, 10, 0.12);
+}
+
+html,
+body,
+#__nuxt {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-surface-950);
+  color: var(--color-surface-50);
+  -webkit-font-smoothing: antialiased;
+}
