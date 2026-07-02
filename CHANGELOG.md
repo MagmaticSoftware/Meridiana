@@ -24,3 +24,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Base `WidgetGrid` component rendering the persisted layout (Pinia
   `layout` store) as a CSS grid, with a dashed placeholder box for any
   layout item whose widget isn't registered yet.
+
+### Fixed
+
+- Component auto-import: components nested under `components/<folder>/`
+  were being registered with a folder-name prefix (e.g. `GridWidgetGrid`
+  instead of `WidgetGrid`), so `<WidgetGrid />` failed to resolve. Set
+  `pathPrefix: false` in `nuxt.config.ts`.
+- `useWakeLock` kept showing a stale native-lock error message even after
+  the fallback engaged successfully; the error is now cleared once the
+  fallback starts.
+
+### Changed
+
+- Disabled the PWA service worker in dev (`pwa.devOptions.enabled: false`)
+  — it was caching the page shell and causing stale content / hydration
+  mismatches while iterating. Will re-enable to test installability and
+  offline behavior in the PWA finalization phase.

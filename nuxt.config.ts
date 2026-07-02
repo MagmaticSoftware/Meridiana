@@ -14,6 +14,8 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  components: [{ path: '~/components', pathPrefix: false }],
+
   vite: {
     plugins: [tailwindcss()],
   },
@@ -49,7 +51,10 @@ export default defineNuxtConfig({
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
     },
     devOptions: {
-      enabled: true,
+      // Keep the SW out of the way during development — it caches the
+      // page shell and causes stale content / hydration mismatches while
+      // iterating. Re-enable to test installability/offline behavior.
+      enabled: false,
       type: 'module',
     },
   },

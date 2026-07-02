@@ -56,6 +56,7 @@ export function useWakeLock() {
 
     fallbackVideo = video
     mode.value = 'fallback'
+    error.value = null
   }
 
   function stopFallback() {
