@@ -1,8 +1,10 @@
 <template>
-  <div class="bg-surface-950 relative h-full w-full">
+  <div class="relative h-full w-full">
     <NuxtRouteAnnouncer />
+    <BackgroundManager />
     <WidgetGrid />
     <WakeLockBadge :mode="wakeLock.mode.value" :error="wakeLock.error.value" />
+    <BackgroundSettings />
   </div>
 </template>
 

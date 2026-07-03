@@ -31,6 +31,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   it adapts from a small grid cell up to fullscreen.
 - `useNow` composable: a reactive `Date` updated on an interval, shared by
   all clock styles.
+- Background system (`app/components/background`, `app/stores/background.ts`,
+  `app/composables/useBackground.ts`): four modes — curated CSS presets
+  (dark minimal, warm gradient, soft fade), a single image, a rotating
+  gallery (configurable interval), and a looping muted video — plus an
+  optional dim/blur/bottom-gradient overlay for widget legibility.
+  Binary assets (images/video) are stored as Blobs in IndexedDB
+  (`lib/storage/idb.ts`); only ids and settings are persisted via
+  `pinia-plugin-persistedstate`. A minimal `BackgroundSettings` panel
+  (gear icon, bottom-left) covers mode switching, uploads, gallery
+  management (`GalleryPicker`) and the overlay controls.
 
 ### Fixed
 
@@ -47,6 +57,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `registerWidget` no longer warns on redundant re-registration of the
   exact same component (e.g. from Nuxt's dev-time SSR warmup) — only when
   an id is reused by a genuinely different component.
+- `GalleryPicker`'s thumbnail loader used a non-deep `watch` on the gallery
+  ids array, so pushing a new id (same array reference) never re-triggered
+  it — new thumbnails silently never loaded. Added `deep: true`.
+- `useBackground`'s reactive setup (gallery rotation timer, IndexedDB
+  asset lookups) ran unguarded during SSR, throwing (`setInterval` is
+  disallowed server-side, and `indexedDB` doesn't exist there). Guarded
+  with `import.meta.server`.
 
 ### Changed
 

@@ -79,6 +79,8 @@ app/
   app.vue
 lib/
   widgets/              -> registry.ts, types.ts (widget registry, framework-agnostic)
+  backgrounds/          -> presets.ts (curated background presets)
+  storage/              -> idb.ts (IndexedDB blob storage for background assets)
 public/
 ```
 
@@ -98,12 +100,14 @@ without touching the grid, the layout system or any other widget.
 - **Grid Layout System** — an editable grid where widgets can be added,
   resized, repositioned, configured, or expanded to fullscreen.
 - **Layout persistence** — the grid layout (widget ids, positions, sizes,
-  per-widget config) is serialized as JSON in `localStorage`, and can be
-  exported/imported to share presets.
-- **Theme/Background system** — decoupled from widgets: single image,
-  rotating gallery, or looping video, with curated presets and an optional
-  readability overlay. Binary assets (images/videos) are stored in
-  IndexedDB; only preferences/metadata go in `localStorage`.
+  per-widget config) is serialized as JSON and persisted via
+  `pinia-plugin-persistedstate`, and can be exported/imported to share
+  presets.
+- **Theme/Background system** — decoupled from widgets: curated CSS
+  presets, a single image, a rotating gallery, or a looping video, with an
+  optional dim/blur/gradient overlay for widget legibility. Binary assets
+  (images/video) are stored as Blobs in IndexedDB; only the active mode,
+  asset ids and overlay settings are persisted as preferences/metadata.
 - **Design tokens** — colors, fonts, radii and shadows are centralized in the
   Tailwind 4 `@theme` block in `app/assets/css/main.css`, so background/theme
   presets can restyle the app consistently.
@@ -115,7 +119,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to add a new widget.
 - [x] Phase 0 — Project setup (Nuxt, Tailwind, Pinia, PWA, tooling)
 - [x] Phase 1 — Wake Lock, widget registry, empty grid
 - [x] Phase 2 — Clock widget (flip / minimal / analog)
-- [ ] Phase 3 — Background system
+- [x] Phase 3 — Background system
 - [ ] Phase 4 — Date/Calendar, World Clock, Weather (mock), Checklist widgets
 - [ ] Phase 5 — Grid editor UI (add/remove/resize/configure widgets)
 - [ ] Phase 6 — PWA finalization (icons, offline)
