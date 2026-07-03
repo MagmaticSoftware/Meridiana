@@ -19,6 +19,9 @@
         v-if="getWidget(item.widgetId)"
         :size="{ w: item.w, h: item.h }"
         v-bind="item.config"
+        @update:config="
+          (patch: Record<string, unknown>) => handleConfigUpdate(item, patch)
+        "
       />
       <WidgetPlaceholder v-else :widget-id="item.widgetId" />
     </div>
@@ -27,10 +30,15 @@
 
 <script setup lang="ts">
 import { useLayoutStore } from '~/stores/layout'
+import type { LayoutItem } from '~/stores/layout'
 
 const columns = 6
 const rows = 4
 
 const layout = useLayoutStore()
 const { getWidget } = useWidgetRegistry()
+
+function handleConfigUpdate(item: LayoutItem, patch: Record<string, unknown>) {
+  layout.updateItem(item.id, { config: { ...item.config, ...patch } })
+}
 </script>

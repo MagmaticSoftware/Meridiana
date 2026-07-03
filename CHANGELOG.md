@@ -41,6 +41,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `pinia-plugin-persistedstate`. A minimal `BackgroundSettings` panel
   (gear icon, bottom-left) covers mode switching, uploads, gallery
   management (`GalleryPicker`) and the overlay controls.
+- Date widget: "Today", localized weekday/date, and ISO week number.
+- World Clock widget: current time for a configurable list of cities
+  (defaults to New York, London, Tokyo, Sydney).
+- Weather widget: mock data behind a `WeatherProvider` interface
+  (`lib/weather`) so a real provider (e.g. Open-Meteo) can be swapped in
+  later without touching the widget; simple inline SVG condition icons,
+  Celsius/Fahrenheit unit setting.
+- Checklist widget: add/toggle/remove todo items. No dedicated store —
+  items are persisted as part of the widget's own layout `config` via a
+  new generic `update:config` event that any widget can emit, handled
+  once in `WidgetGrid`.
+- Layout seed now showcases all seven registered widgets at once (3
+  clock styles, date, world clock, weather, checklist) across the grid.
 
 ### Fixed
 
@@ -64,6 +77,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   asset lookups) ran unguarded during SSR, throwing (`setInterval` is
   disallowed server-side, and `indexedDB` doesn't exist there). Guarded
   with `import.meta.server`.
+- Nuxt's component auto-import scanned plain `.ts` helper files inside
+  `components/widgets/**` (e.g. multiple `types.ts`) as components,
+  producing name-collision warnings. Restricted the components scan to
+  `.vue` files only (`extensions: ['vue']`).
+- Weather widget rendered a mis-encoded degree sign ("11B°C" instead of
+  "11°C") due to a bad UTF-8 byte in the source; fixed.
 
 ### Changed
 

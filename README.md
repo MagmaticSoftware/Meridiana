@@ -120,7 +120,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to add a new widget.
 - [x] Phase 1 — Wake Lock, widget registry, empty grid
 - [x] Phase 2 — Clock widget (flip / minimal / analog)
 - [x] Phase 3 — Background system
-- [ ] Phase 4 — Date/Calendar, World Clock, Weather (mock), Checklist widgets
+- [x] Phase 4 — Date/Calendar, World Clock, Weather (mock), Checklist widgets
 - [ ] Phase 5 — Grid editor UI (add/remove/resize/configure widgets)
 - [ ] Phase 6 — PWA finalization (icons, offline)
 - [ ] Phase 7 — Polish & `v0.1.0` release
