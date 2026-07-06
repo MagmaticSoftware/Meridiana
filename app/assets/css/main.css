@@ -25,18 +25,18 @@
   --color-accent-500: #d16b2c;
   --color-accent-600: #ab5321;
 
-  /* Soft rounded corners */
-  --radius-sm: 0.5rem;
-  --radius-md: 0.875rem;
-  --radius-lg: 1.5rem;
-  --radius-xl: 2.25rem;
-  --radius-2xl: 3rem;
+  /* Crisp, modern corners -- present but not pillowy */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
 
-  /* Diffused, delicate shadows */
+  /* Defined, contemporary shadows */
   --shadow-soft:
-    0 1px 2px rgba(16, 13, 10, 0.04), 0 8px 24px rgba(16, 13, 10, 0.08);
+    0 1px 2px rgba(16, 13, 10, 0.1), 0 4px 14px rgba(16, 13, 10, 0.14);
   --shadow-soft-lg:
-    0 4px 12px rgba(16, 13, 10, 0.06), 0 16px 48px rgba(16, 13, 10, 0.12);
+    0 2px 6px rgba(16, 13, 10, 0.14), 0 16px 40px rgba(16, 13, 10, 0.24);
 }
 
 html,

@@ -2,14 +2,15 @@
 
 A calm, customizable screensaver PWA for desktop, mobile and tablet.
 
-Meridiana keeps your screen awake and turns it into a soft, elegant
+Meridiana keeps your screen awake and turns it into a calm, elegant
 dashboard: clock, weather, calendar and other widgets laid out over a static
 background, an image gallery, or a looping video — inspired by
 [clockie.app](https://clockie.app) and Android's _StandBy Mode_, but with a
-more refined aesthetic: clean typography, soft surfaces, rounded corners, a
-warm neutral palette and generous whitespace.
+more refined aesthetic: clean typography, soft surfaces with crisp modern
+corners, a warm neutral palette and generous whitespace.
 
-> **Status:** early development (Phase 0 — project setup). Not yet usable.
+> **Status:** MVP feature-complete (Phases 0–6). Installable as a PWA;
+> polish and a `v0.1.0` tag are next.
 
 ## Screenshots
 
@@ -123,8 +124,15 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to add a new widget.
 - [x] Phase 3 — Background system
 - [x] Phase 4 — Date/Calendar, World Clock, Weather (mock), Checklist widgets
 - [x] Phase 5 — Grid editor UI (add/remove/resize/configure widgets)
-- [ ] Phase 6 — PWA finalization (icons, offline)
+- [x] Phase 6 — PWA finalization (icons, offline — see note below)
 - [ ] Phase 7 — Polish & `v0.1.0` release
+
+> **Note on offline support:** the manifest, icons and generated service
+> worker (with a full precache list) are all in place and verified correct
+> in a production build. Whether a fully offline reload actually serves
+> from cache hasn't been confirmed hands-on — please verify in your
+> browser's DevTools (Application β†’ Service Workers β†’ Offline) before
+> relying on it.
 
 Widgets planned beyond the MVP: news, photo slideshow, pomodoro/focus timer,
 calendar agenda, quotes, and a real weather provider

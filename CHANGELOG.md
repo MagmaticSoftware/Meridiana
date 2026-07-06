@@ -68,6 +68,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   expanded to fill the whole grid (its own fullscreen/expand icon while
   editing, or a double-click in normal mode); Escape backs out of
   fullscreen, then settings, then edit mode in turn.
+- Design tokens tightened for a more contemporary look: the `@theme`
+  radius scale went from a pillowy `0.5rem`–`3rem` down to a crisp
+  `0.25rem`–`1.25rem`, and the shadow tokens are more defined (higher
+  opacity, tighter blur). Both cascade through every `rounded-*` /
+  `shadow-*` utility already in use, so the whole app picked up the
+  change from one edit.
+- PWA icon set: a source mark (`public/logo.svg`, a circle bisected by
+  a line — echoing "meridian") feeds `@vite-pwa/assets-generator`
+  (`pwaAssets` in `nuxt.config.ts`) to generate the favicon,
+  apple-touch-icon, 192/512 and maskable icons at build time. The
+  manifest's `theme_color`/`background_color` now match the app's
+  actual `surface-950` token instead of a placeholder.
 
 ### Fixed
 
@@ -108,6 +120,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   positioned from opposite corners with no shared width awareness, so
   they overlapped/garbled on narrow grid cells (e.g. mobile). Combined
   them into one flex row with a truncating label.
+- The generated PWA icon/manifest `<link>` tags never reached the page
+  `<head>` because nothing rendered `@vite-pwa/nuxt`'s `NuxtPwaAssets`
+  component; added it to `app.vue`.
 
 ### Changed
 
@@ -115,3 +130,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   — it was caching the page shell and causing stale content / hydration
   mismatches while iterating. Will re-enable to test installability and
   offline behavior in the PWA finalization phase.
+
+### Known limitations
+
+- PWA offline support is wired up (manifest, icons, and a generated
+  service worker with an 18-entry precache list, all confirmed correct
+  in a production build via `nuxt build && nuxt preview`), and the
+  service worker reliably reaches an "activated" state. However, this
+  session's automated browser tooling could not conclusively confirm
+  that the precache actually populates Cache Storage, so a genuinely
+  offline reload is unverified here. Please confirm manually (Chrome
+  DevTools β†’ Application β†’ Service Workers β†’ Offline β†’ reload) before
+  relying on offline behavior.

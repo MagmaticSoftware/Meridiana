@@ -1,6 +1,7 @@
 <template>
   <div class="relative h-full w-full">
     <NuxtRouteAnnouncer />
+    <NuxtPwaAssets />
     <BackgroundManager />
     <WidgetGrid />
     <template v-if="!editor.fullscreenItemId">

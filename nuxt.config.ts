@@ -42,15 +42,18 @@ export default defineNuxtConfig({
       short_name: 'Meridiana',
       description:
         'A calm, customizable screensaver for desktop, mobile and tablet.',
-      theme_color: '#1a1a1a',
-      background_color: '#1a1a1a',
+      theme_color: '#100d0a',
+      background_color: '#100d0a',
       display: 'standalone',
       orientation: 'any',
-      icons: [],
+    },
+    pwaAssets: {
+      preset: 'minimal-2023',
+      image: 'public/logo.svg',
     },
     workbox: {
       navigateFallback: '/',
-      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+      globPatterns: ['**/*.{js,css,html,png,svg,ico,webmanifest}'],
     },
     devOptions: {
       // Keep the SW out of the way during development — it caches the
