@@ -101,8 +101,9 @@ without touching the grid, the layout system or any other widget.
   resized, repositioned, configured, or expanded to fullscreen.
 - **Layout persistence** — the grid layout (widget ids, positions, sizes,
   per-widget config) is serialized as JSON and persisted via
-  `pinia-plugin-persistedstate`, and can be exported/imported to share
-  presets.
+  `pinia-plugin-persistedstate`. The store already exposes
+  `exportLayout`/`importLayout` for sharing presets as JSON; a UI for
+  that is still to come.
 - **Theme/Background system** — decoupled from widgets: curated CSS
   presets, a single image, a rotating gallery, or a looping video, with an
   optional dim/blur/gradient overlay for widget legibility. Binary assets
@@ -121,7 +122,7 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to add a new widget.
 - [x] Phase 2 — Clock widget (flip / minimal / analog)
 - [x] Phase 3 — Background system
 - [x] Phase 4 — Date/Calendar, World Clock, Weather (mock), Checklist widgets
-- [ ] Phase 5 — Grid editor UI (add/remove/resize/configure widgets)
+- [x] Phase 5 — Grid editor UI (add/remove/resize/configure widgets)
 - [ ] Phase 6 — PWA finalization (icons, offline)
 - [ ] Phase 7 — Polish & `v0.1.0` release
 

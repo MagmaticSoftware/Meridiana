@@ -54,6 +54,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   once in `WidgetGrid`.
 - Layout seed now showcases all seven registered widgets at once (3
   clock styles, date, world clock, weather, checklist) across the grid.
+- Grid editor mode (`EditModeToggle`, `GridItemChrome`, `WidgetPicker`,
+  `WidgetSettingsPanel`, `stores/editor.ts`): a top-right "Edit" toggle
+  reveals per-widget chrome (drag anywhere on the item, resize via the
+  bottom-right handle, both snapped to grid cells and reverted on drop if
+  they'd collide with another widget) plus fullscreen/settings/remove
+  actions. A floating "+" button opens a picker listing every registered
+  widget, placed automatically in the first free slot
+  (`useGridPlacement`'s `findFreeSlot`/`hasCollision`). The settings
+  button opens a generic drawer rendered from the widget's
+  `settingsSchema` (select/boolean/number/string fields), writing back
+  through the existing `update:config` mechanism. Any widget can be
+  expanded to fill the whole grid (its own fullscreen/expand icon while
+  editing, or a double-click in normal mode); Escape backs out of
+  fullscreen, then settings, then edit mode in turn.
 
 ### Fixed
 
@@ -83,6 +97,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `.vue` files only (`extensions: ['vue']`).
 - Weather widget rendered a mis-encoded degree sign ("11B°C" instead of
   "11°C") due to a bad UTF-8 byte in the source; fixed.
+- `WidgetSettingsPanel` read `widget.settingsSchema` directly off the
+  live `selectedItemId`-derived computed, which turns `undefined` the
+  instant the drawer starts closing — while its leave transition was
+  still animating, Vue re-rendered against `undefined` and threw. Now
+  keeps the last non-null widget in a separate ref that only updates
+  forward, so the drawer's content stays intact through the close
+  animation.
+- `GridItemChrome`'s name label and action buttons were both absolutely
+  positioned from opposite corners with no shared width awareness, so
+  they overlapped/garbled on narrow grid cells (e.g. mobile). Combined
+  them into one flex row with a truncating label.
 
 ### Changed
 
