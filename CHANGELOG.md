@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-08-05
+
+Initial MVP release: Wake Lock, a pluggable widget registry, five widgets
+(clock, date, world clock, weather, checklist), a background system, a full
+grid editor, and PWA installability.
+
 ### Added
 
 - Project scaffolding with Nuxt 4.4, TypeScript, Tailwind CSS 4.3, Pinia
@@ -130,6 +136,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   — it was caching the page shell and causing stale content / hydration
   mismatches while iterating. Will re-enable to test installability and
   offline behavior in the PWA finalization phase.
+- Reworked `README.md` (accurate project structure, an honest
+  "Known limitations" section, updated status/roadmap) and
+  `CONTRIBUTING.md` (documented the `settingsSchema` β†’
+  `WidgetSettingsPanel` auto-rendering and the `update:config`
+  persistence pattern) to match what's actually built, rather than the
+  Phase 0 aspirational versions.
 
 ### Known limitations
 

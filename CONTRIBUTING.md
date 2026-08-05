@@ -1,9 +1,9 @@
 # Contributing to Meridiana
 
-Thanks for your interest in contributing! This project is developed in
-phases (see the roadmap in [`README.md`](./README.md)); some of the
-guidelines below (in particular the widget registry) describe the intended
-architecture and will apply from Phase 1 onward.
+Thanks for your interest in contributing! Meridiana's MVP (`v0.1.0`) is
+complete — see the [roadmap](./README.md#roadmap) and
+[known limitations](./README.md#known-limitations) in the README for where
+things stand and what's still rough.
 
 ## Branching strategy
 
@@ -102,11 +102,21 @@ Guidelines for the widget component itself:
 
 - Adapt its internal layout to the size it's given (container queries or a
   `size` prop), not just global media queries — a widget must look good both
-  in a small grid cell and in fullscreen.
-- Read/write its own settings through the schema declared at registration;
-  don't reach into other widgets' state or the grid store directly.
+  in a small grid cell and in fullscreen. Wrap the root element with
+  `[container-type:size]` and size text with `cqw`/`cqh` units, as the
+  existing widgets do.
+- Every field in `settingsSchema` is rendered automatically by
+  `WidgetSettingsPanel` (select/boolean/number/string) — you don't write
+  any settings UI yourself, just declare the schema and read
+  `props.<key>` (Nuxt passes each layout item's `config` object as props
+  via `v-bind`).
+- If a widget owns data beyond simple settings (e.g. the Checklist
+  widget's todo items), emit `update:config` with a partial config patch;
+  `WidgetGrid` merges it into the layout item and persists it. Don't reach
+  into the layout store, other widgets' state, or the grid directly.
 - Keep any external data fetching (e.g. a weather provider) behind a small,
-  swappable module so it can be mocked or replaced later.
+  swappable module so it can be mocked or replaced later — see
+  `lib/weather` for the pattern.
 
 ## Code style
 

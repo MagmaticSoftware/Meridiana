@@ -9,26 +9,34 @@ background, an image gallery, or a looping video — inspired by
 more refined aesthetic: clean typography, soft surfaces with crisp modern
 corners, a warm neutral palette and generous whitespace.
 
-> **Status:** MVP feature-complete (Phases 0–6). Installable as a PWA;
-> polish and a `v0.1.0` tag are next.
+> **Status:** `v0.1.0` — MVP complete. Wake Lock, five widgets, background
+> system, a full grid editor, and PWA installability all work; see
+> [Known limitations](#known-limitations) for what's still rough.
 
 ## Screenshots
 
 _Coming soon._
 
-## Features (planned)
+## Features
 
 - **Wake Lock** — keeps the screen on using the native Screen Wake Lock API,
-  with a fallback for browsers that don't support it.
-- **Modular widgets** — clock, date/calendar, world clock, weather, checklist,
-  and more to come, each independently registered.
-- **Grid layout editor** — add, remove, resize, move and configure widgets;
-  jump any widget to fullscreen.
-- **Background system** — single image, rotating gallery, or looping video,
-  with an optional dim/blur/gradient overlay for readability.
-- **Installable PWA** — works offline, installable on desktop and mobile.
+  with a canvas-stream video fallback for browsers that don't support it.
+- **Modular widgets** — clock (minimal / flip / analog), date, world clock,
+  weather, and a checklist, each independently registered. More widgets can
+  be added without touching the grid or any other widget — see
+  [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+- **Grid layout editor** — add, remove, drag, resize (snapped to the grid,
+  reverts on collision) and configure widgets from a settings drawer
+  generated from each widget's schema; expand any widget to fullscreen.
+- **Background system** — curated presets, a single image, a rotating
+  gallery, or a looping video, with a dim/blur/gradient overlay for
+  readability.
+- **Installable PWA** — manifest and icon set generated at build time;
+  offline support via a generated service worker (see
+  [Known limitations](#known-limitations)).
 - **Everything local** — no backend, no account; layout and preferences are
-  stored in your browser (`localStorage` / `IndexedDB`).
+  stored in your browser (`localStorage`/cookies), binary background assets
+  in `IndexedDB`.
 
 ## Tech stack
 
@@ -70,25 +78,34 @@ Other useful scripts:
 
 ```
 app/
-  assets/css/         -> Tailwind entry point & design tokens (@theme)
+  assets/css/     -> Tailwind entry point & design tokens (@theme)
   components/
-    widgets/           -> ClockWidget/, WeatherWidget/, ... (one folder per widget)
-    grid/               -> WidgetGrid.vue, WidgetPicker.vue, GridEditor.vue
-    background/         -> BackgroundManager.vue, GalleryPicker.vue
-  composables/          -> useWidgetRegistry, useWakeLock, useBackground, useLayout
-  stores/               -> Pinia stores (layout, background, settings)
+    widgets/       -> Clock/, Date/, WorldClock/, Weather/, Checklist/
+                      (one folder per widget, <Name>Widget.vue is the
+                      registered entry component)
+    grid/          -> WidgetGrid, GridItemChrome, WidgetPicker,
+                      WidgetSettingsPanel, EditModeToggle, WidgetPlaceholder
+    background/    -> BackgroundManager, BackgroundSettings, GalleryPicker
+    WakeLockBadge.vue
+  composables/    -> useWidgetRegistry, useWakeLock, useNow, useBackground,
+                      useWeather, useGridPlacement
+  stores/         -> Pinia stores: layout, background, editor
+  plugins/        -> widgets.ts (registers every widget on app startup)
   app.vue
 lib/
-  widgets/              -> registry.ts, types.ts (widget registry, framework-agnostic)
-  backgrounds/          -> presets.ts (curated background presets)
-  storage/              -> idb.ts (IndexedDB blob storage for background assets)
+  widgets/        -> registry.ts, types.ts (widget registry, framework-agnostic)
+  backgrounds/    -> presets.ts (curated background presets)
+  storage/        -> idb.ts (IndexedDB blob storage for background assets)
+  weather/        -> types.ts, mockProvider.ts (WeatherProvider interface)
+  grid/           -> config.ts (grid column/row constants)
 public/
 ```
 
 This mostly follows Nuxt 4's default `app/` source directory convention (for
-auto-imports of composables, components and stores), with `lib/widgets`
-living at the project root since it's plain TypeScript, imported explicitly
-rather than auto-imported.
+auto-imports of composables, components and stores), with `lib/*` living at
+the project root since it's plain TypeScript, imported explicitly rather
+than auto-imported. The `editor` store is intentionally not persisted — edit
+mode, the fullscreen widget and the open panel are session-only UI state.
 
 ## Architecture
 
@@ -98,8 +115,15 @@ without touching the grid, the layout system or any other widget.
 - **Widget Registry** (`lib/widgets/registry.ts`) — every widget self-registers
   with an `id`, `name`, `description`, Vue `component`, `defaultSize` /
   `minSize` / `maxSize` (grid units), a `settingsSchema`, and a `category`.
-- **Grid Layout System** — an editable grid where widgets can be added,
-  resized, repositioned, configured, or expanded to fullscreen.
+- **Grid layout & editor** — `WidgetGrid` renders the layout as a CSS grid;
+  in edit mode (`stores/editor.ts`), `GridItemChrome` overlays each widget
+  with drag/resize handles (pointer-based, snapped to grid cells, reverted
+  on drop if the result would collide — `useGridPlacement`), plus
+  fullscreen/settings/remove actions. `WidgetPicker` adds new widgets into
+  the first free slot; `WidgetSettingsPanel` renders a form from the
+  selected widget's `settingsSchema` and writes changes back through the
+  same `update:config` event any widget can emit to persist its own data
+  (e.g. the Checklist widget's todo items) without a bespoke store.
 - **Layout persistence** — the grid layout (widget ids, positions, sizes,
   per-widget config) is serialized as JSON and persisted via
   `pinia-plugin-persistedstate`. The store already exposes
@@ -116,6 +140,26 @@ without touching the grid, the layout system or any other widget.
 
 See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to add a new widget.
 
+## Known limitations
+
+- **Offline support is unconfirmed.** The manifest, icons and generated
+  service worker (with a full precache list) are all in place and verified
+  correct in a production build (`npm run build && npm run preview`), and
+  the service worker reliably reaches an "activated" state. Whether a
+  genuinely offline reload serves from cache hasn't been confirmed
+  hands-on — please check yourself (Chrome DevTools β†’ Application β†’
+  Service Workers β†’ Offline β†’ reload) before relying on it.
+- **Weather is mock data.** `lib/weather` defines a `WeatherProvider`
+  interface so a real provider (planned: [Open-Meteo](https://open-meteo.com))
+  can be swapped in without touching the widget; for now it returns a
+  deterministic value derived from the location string.
+- **No UI for layout export/import yet.** The layout store already exposes
+  `exportLayout`/`importLayout`; wiring them to the editor is planned.
+- **The grid doesn't reflow for small screens.** It's a fixed 6-column grid
+  regardless of viewport width, so widget chrome (name label, action
+  buttons) gets tight on phone-sized viewports. Everything stays usable,
+  just visually cramped.
+
 ## Roadmap
 
 - [x] Phase 0 — Project setup (Nuxt, Tailwind, Pinia, PWA, tooling)
@@ -124,15 +168,8 @@ See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for how to add a new widget.
 - [x] Phase 3 — Background system
 - [x] Phase 4 — Date/Calendar, World Clock, Weather (mock), Checklist widgets
 - [x] Phase 5 — Grid editor UI (add/remove/resize/configure widgets)
-- [x] Phase 6 — PWA finalization (icons, offline — see note below)
-- [ ] Phase 7 — Polish & `v0.1.0` release
-
-> **Note on offline support:** the manifest, icons and generated service
-> worker (with a full precache list) are all in place and verified correct
-> in a production build. Whether a fully offline reload actually serves
-> from cache hasn't been confirmed hands-on — please verify in your
-> browser's DevTools (Application β†’ Service Workers β†’ Offline) before
-> relying on it.
+- [x] Phase 6 — PWA finalization (icons, offline — see known limitations)
+- [x] Phase 7 — Polish & `v0.1.0` release
 
 Widgets planned beyond the MVP: news, photo slideshow, pomodoro/focus timer,
 calendar agenda, quotes, and a real weather provider
