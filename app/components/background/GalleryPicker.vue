@@ -1,9 +1,9 @@
 <template>
-  <div class="flex flex-wrap gap-2">
+  <div class="grid grid-cols-3 gap-2">
     <div
       v-for="id in store.galleryImageIds"
       :key="id"
-      class="group border-surface-700 relative h-16 w-24 overflow-hidden rounded-md border"
+      class="group bg-tint relative aspect-[4/3] overflow-hidden rounded-xl"
     >
       <img
         v-if="thumbnails.get(id)"
@@ -13,29 +13,37 @@
       />
       <button
         type="button"
-        class="absolute top-1 right-1 hidden h-5 w-5 items-center justify-center rounded-full bg-black/60 text-xs text-white group-hover:flex"
+        class="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
+        aria-label="Remove image"
         @click="handleRemove(id)"
       >
-        &times;
+        <AppIcon name="close" class="h-3 w-3" :stroke-width="2.4" />
       </button>
     </div>
     <label
-      class="border-surface-600 text-surface-400 flex h-16 w-24 cursor-pointer items-center justify-center rounded-md border border-dashed text-xs"
+      class="border-line text-ink-muted hover:border-accent hover:text-ink flex aspect-[4/3] cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed text-xs transition-colors"
     >
-      + Add
-      <input type="file" accept="image/*" class="hidden" @change="handleAdd" />
+      <AppIcon name="plus" class="h-4 w-4" />
+      Add
+      <input
+        type="file"
+        accept="image/*"
+        multiple
+        class="hidden"
+        @change="handleAdd"
+      />
     </label>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onUnmounted, reactive, watch } from 'vue'
-import { useBackground } from '~/composables/useBackground'
+import { useBackgroundAssets } from '~/composables/useBackground'
 import { useBackgroundStore } from '~/stores/background'
 import { getAsset } from '~~/lib/storage/idb'
 
 const store = useBackgroundStore()
-const bg = useBackground()
+const assets = useBackgroundAssets()
 
 const thumbnails = reactive(new Map<string, string>())
 
@@ -57,15 +65,15 @@ onUnmounted(() => {
   for (const url of thumbnails.values()) URL.revokeObjectURL(url)
 })
 
-function handleAdd(event: Event) {
+async function handleAdd(event: Event) {
   const input = event.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (file) bg.addGalleryImage(file)
+  const files = Array.from(input.files ?? [])
   input.value = ''
+  for (const file of files) await assets.addGalleryImage(file)
 }
 
 function handleRemove(id: string) {
-  bg.removeGalleryImage(id)
+  assets.removeGalleryImage(id)
   const url = thumbnails.get(id)
   if (url) {
     URL.revokeObjectURL(url)

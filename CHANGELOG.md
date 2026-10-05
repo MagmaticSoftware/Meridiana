@@ -7,6 +7,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Calendar widget: a month view with today highlighted in the accent color,
+  previous/next navigation (snaps back to today after a minute), Monday or
+  Sunday week start, optional ISO week numbers.
+- Clock styles: _Bold_, _Stacked_ (hours over minutes) and _Condensed_,
+  plus an optional date line; the analog dial now has numerals and a ticking
+  accent second hand.
+- World Clock styles: _List_, _Tiles_ (darker at night), _Analog_ dials
+  (white by day, black by night) and a dotted world _Map_ with live
+  day/night shading; cities are now selectable from a curated list, with
+  relative day and offset ("Tomorrow, +7h").
+- Appearance settings: dark/light cards, glass/solid material and seven
+  accent colors, applied uniformly to every widget and panel; per-widget
+  _Transparent_ frame.
+- Floating dock replacing the scattered buttons; controls and cursor fade
+  out after a few idle seconds (can be turned off).
+- Layout export/import (JSON, validated) and reset to default.
+- _Waves_ image background, used by default on first run, plus new
+  _Dune_ and _Mist_ presets.
+- Live weather from Open-Meteo (geocoded city or device location), with
+  today's high/low, day/night icons, 15-minute refresh and an offline
+  fallback to the last reading.
+- Responsive grid with phone (2 columns), tablet (4) and desktop (6)
+  breakpoints, each with its own maximum size, spacing and — once
+  rearranged — its own saved arrangement; "Re-flow" rebuilds it from
+  desktop.
+- Drag & resize on touch screens via a grip handle (swiping the card still
+  scrolls) and auto-scroll near the edges. Moving a widget pushes down only
+  the widgets it covers (in the phone/tablet stack the others also close
+  up, so dragging lower swaps); on desktop, resizing stops at the nearest
+  neighbour instead of being refused or rearranging other widgets.
+- In edit mode the grid leaves room for the dock, so bottom-row resize
+  handles are reachable.
+- 12-column grid (8 / 4 columns on tablet / phone) with half-block steps:
+  every size doubled, 2×2 is the smallest widget, but widgets can move and
+  resize by one unit (e.g. sit exactly centered). Saved layouts and v0.1
+  exports are converted automatically; exports now include a format
+  `version`.
+- Edit-mode grid shown as a single overlay with crosses at block
+  intersections and dots at half steps, in the theme's text color.
+- Unit tests (Vitest) for calendar, time-zone, sun, grid, responsive and
+  weather logic.
+
+### Changed
+
+- New design system: self-hosted Inter / Outfit / Oswald variable fonts
+  (Inter was referenced but never loaded before), semantic tone-aware color
+  tokens, card surfaces for every widget, restyled date, weather and
+  checklist widgets, redesigned editor chrome and settings panels.
+- Redesigned default layout.
+- The app now runs client-side only (`ssr: false`), removing the
+  `ClientOnly` wrappers and hydration mismatches.
+- One shared, second-aligned clock ticker instead of one timer per widget.
+- Pure helpers moved to `lib/` (`grid/placement.ts`, `grid/layout.ts`,
+  `time/*`).
+
+### Fixed
+
+- Persisted state was stored in cookies (the plugin default), which broke
+  past ~4 KB (e.g. a long checklist) and was sent with every request; it
+  now uses `localStorage`, migrating existing cookie data once.
+- The background resolver ran once per component using it, so gallery
+  rotation timers and IndexedDB reads were duplicated; it is now split into
+  a single source (`useBackgroundSource`) and stateless actions.
+- Analog clock hands didn't animate (SVG line coordinates aren't
+  transitionable) and would spin backwards at the top of the minute.
+- The default layout array was shared and mutated in place.
+
 ## [0.1.0] - 2026-08-05
 
 Initial MVP release: Wake Lock, a pluggable widget registry, five widgets

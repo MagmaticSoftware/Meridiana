@@ -68,6 +68,7 @@ export interface WidgetDefinition {
   description: string
   component: Component // the Vue component to render
   category: 'time' | 'weather' | 'info' | 'productivity' // extend as needed
+  icon: string // an AppIcon name, shown in the widget picker
   defaultSize: { w: number; h: number } // grid units
   minSize: { w: number; h: number }
   maxSize: { w: number; h: number }
@@ -90,9 +91,10 @@ export default defineNuxtPlugin(() => {
     description: 'Displays the current time in flip, minimal or analog style.',
     component: ClockWidget,
     category: 'time',
-    defaultSize: { w: 2, h: 2 },
-    minSize: { w: 1, h: 1 },
-    maxSize: { w: 3, h: 3 },
+    icon: 'clock',
+    defaultSize: { w: 4, h: 4 }, // grid units: 12 columns on desktop
+    minSize: { w: 2, h: 2 }, // 2×2 is the smallest widget ("one block")
+    maxSize: { w: 12, h: 8 },
     settingsSchema: [/* ... */],
   })
 })
@@ -105,8 +107,17 @@ Guidelines for the widget component itself:
   in a small grid cell and in fullscreen. Wrap the root element with
   `[container-type:size]` and size text with `cqw`/`cqh` units, as the
   existing widgets do.
+- The grid already wraps each widget in its card (`WidgetCard`) with
+  padding, so render content only — no background, border or radius.
+- Paint with the semantic color utilities (`text-ink`, `text-ink-muted`,
+  `text-ink-subtle`, `bg-tint`, `bg-tint-strong`, `border-line`,
+  `bg-accent`/`text-accent`, `text-accent-ink`) rather than raw colors, so
+  the widget follows the dark/light/glass/solid and accent settings, and use
+  the shared fonts (`font-sans`, `font-display`, `font-condensed`).
+- Use `useNow()` (or `useNow('minute')`) for the current time rather than
+  your own timers.
 - Every field in `settingsSchema` is rendered automatically by
-  `WidgetSettingsPanel` (select/boolean/number/string) — you don't write
+  `WidgetSettingsPanel` (select/multiselect/boolean/number/string) — you don't write
   any settings UI yourself, just declare the schema and read
   `props.<key>` (Nuxt passes each layout item's `config` object as props
   via `v-bind`).
@@ -122,6 +133,8 @@ Guidelines for the widget component itself:
 
 - Run `npm run lint` and `npm run format` before opening a PR.
 - Run `npm run typecheck` — the project is strict TypeScript.
+- Run `npm test`. Keep non-UI logic in `lib/` as plain TypeScript and cover
+  it with a Vitest test in `test/`.
 
 ## Pull requests
 

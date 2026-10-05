@@ -1,18 +1,53 @@
-import { onMounted, onUnmounted, ref } from 'vue'
+import { getCurrentScope, onScopeDispose, shallowRef, watch } from 'vue'
+import type { Ref } from 'vue'
 
-export function useNow(intervalMs = 1000) {
-  const now = ref(new Date())
-  let timer: ReturnType<typeof setInterval> | undefined
+// One ticker for the whole app, aligned to the wall-clock second so every
+// clock flips at the same instant, and stopped when nothing is listening.
+const now = shallowRef(new Date())
+let subscribers = 0
+let timer: ReturnType<typeof setTimeout> | undefined
 
-  onMounted(() => {
-    timer = setInterval(() => {
+function schedule() {
+  timer = setTimeout(
+    () => {
       now.value = new Date()
-    }, intervalMs)
-  })
+      schedule()
+    },
+    1000 - (Date.now() % 1000) + 5,
+  )
+}
 
-  onUnmounted(() => {
-    if (timer) clearInterval(timer)
-  })
+function subscribe() {
+  if (!import.meta.client) return
+  if (subscribers++ === 0) {
+    now.value = new Date()
+    schedule()
+  }
+  if (getCurrentScope()) {
+    onScopeDispose(() => {
+      if (--subscribers === 0) clearTimeout(timer)
+    })
+  }
+}
 
-  return now
+/**
+ * A reactive `Date` shared by every widget. `'minute'` only changes when
+ * the minute does, for widgets that don't need to re-render every second.
+ */
+export function useNow(
+  precision: 'second' | 'minute' = 'second',
+): Readonly<Ref<Date>> {
+  subscribe()
+  if (precision === 'second') return now
+
+  const minute = shallowRef(now.value)
+  watch(now, (date) => {
+    if (
+      Math.floor(date.getTime() / 60_000) !==
+      Math.floor(minute.value.getTime() / 60_000)
+    ) {
+      minute.value = date
+    }
+  })
+  return minute
 }

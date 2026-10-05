@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { DEFAULT_PRESET_ID } from '~~/lib/backgrounds/presets'
 
 export type BackgroundMode = 'preset' | 'single' | 'gallery' | 'video'
 
@@ -13,15 +14,15 @@ export const useBackgroundStore = defineStore(
   'background',
   () => {
     const mode = ref<BackgroundMode>('preset')
-    const presetId = ref('warm-gradient')
+    const presetId = ref(DEFAULT_PRESET_ID)
     const singleImageId = ref<string | null>(null)
     const galleryImageIds = ref<string[]>([])
     const galleryIntervalSec = ref(30)
     const videoId = ref<string | null>(null)
     const overlay = ref<BackgroundOverlay>({
-      dim: 0.2,
+      dim: 0.1,
       blur: 0,
-      gradient: true,
+      gradient: false,
     })
 
     return {

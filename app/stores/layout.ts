@@ -1,54 +1,24 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import {
+  LAYOUT_VERSION,
+  createDefaultLayout,
+  migratePersistedLayout,
+  parseLayout,
+  serializeLayout,
+} from '~~/lib/grid/layout'
+import type { LayoutItem, ResponsiveBreakpoint } from '~~/lib/grid/layout'
+import type { Breakpoint } from '~~/lib/grid/config'
+import type { GridRect } from '~~/lib/grid/placement'
 
-export interface LayoutItem {
-  id: string
-  widgetId: string
-  x: number
-  y: number
-  w: number
-  h: number
-  config: Record<string, unknown>
-}
-
-const placeholderItems: LayoutItem[] = [
-  {
-    id: '1',
-    widgetId: 'clock',
-    x: 0,
-    y: 0,
-    w: 2,
-    h: 1,
-    config: { variant: 'minimal' },
-  },
-  { id: '2', widgetId: 'date', x: 2, y: 0, w: 2, h: 1, config: {} },
-  { id: '3', widgetId: 'world-clock', x: 4, y: 0, w: 2, h: 2, config: {} },
-  {
-    id: '4',
-    widgetId: 'clock',
-    x: 0,
-    y: 1,
-    w: 2,
-    h: 1,
-    config: { variant: 'flip' },
-  },
-  { id: '5', widgetId: 'weather', x: 2, y: 1, w: 2, h: 2, config: {} },
-  {
-    id: '6',
-    widgetId: 'clock',
-    x: 0,
-    y: 2,
-    w: 2,
-    h: 2,
-    config: { variant: 'analog' },
-  },
-  { id: '7', widgetId: 'checklist', x: 4, y: 2, w: 2, h: 2, config: {} },
-]
+export type { LayoutItem, WidgetFrame } from '~~/lib/grid/layout'
 
 export const useLayoutStore = defineStore(
   'layout',
   () => {
-    const items = ref<LayoutItem[]>(placeholderItems)
+    const items = ref<LayoutItem[]>(createDefaultLayout())
+    /** Saved-format version; see `LAYOUT_VERSION`. */
+    const version = ref(LAYOUT_VERSION)
 
     function addItem(item: LayoutItem) {
       items.value.push(item)
@@ -63,22 +33,70 @@ export const useLayoutStore = defineStore(
       if (item) Object.assign(item, patch)
     }
 
-    function exportLayout(): string {
-      return JSON.stringify(items.value, null, 2)
+    function updateConfig(id: string, patch: Record<string, unknown>) {
+      const item = items.value.find((item) => item.id === id)
+      if (item) item.config = { ...item.config, ...patch }
     }
 
+    /**
+     * Saves a whole arrangement for one breakpoint: the desktop rects are
+     * the items' own x/y/w/h, other breakpoints get `layouts[bp]`.
+     */
+    function applyArrangement(
+      rects: ReadonlyMap<string, GridRect>,
+      breakpoint: Breakpoint,
+    ) {
+      for (const item of items.value) {
+        const rect = rects.get(item.id)
+        if (!rect) continue
+        if (breakpoint === 'desktop') Object.assign(item, rect)
+        else item.layouts = { ...item.layouts, [breakpoint]: { ...rect } }
+      }
+    }
+
+    /** Forgets a breakpoint's arrangement so it's derived from desktop again. */
+    function resetBreakpoint(breakpoint: ResponsiveBreakpoint) {
+      for (const item of items.value) {
+        if (!item.layouts?.[breakpoint]) continue
+        const { [breakpoint]: _removed, ...rest } = item.layouts
+        item.layouts = Object.keys(rest).length ? rest : undefined
+      }
+    }
+
+    function resetLayout() {
+      items.value = createDefaultLayout()
+    }
+
+    function exportLayout(): string {
+      return serializeLayout(items.value)
+    }
+
+    /** Replaces the layout; throws (leaving it untouched) if invalid. */
     function importLayout(json: string) {
-      items.value = JSON.parse(json) as LayoutItem[]
+      items.value = parseLayout(json)
     }
 
     return {
       items,
+      version,
       addItem,
       removeItem,
       updateItem,
+      updateConfig,
+      applyArrangement,
+      resetBreakpoint,
+      resetLayout,
       exportLayout,
       importLayout,
     }
   },
-  { persist: true },
+  {
+    persist: {
+      // Older saved layouts are converted before the store sees them.
+      serializer: {
+        serialize: JSON.stringify,
+        deserialize: (raw) => migratePersistedLayout(JSON.parse(raw)) as never,
+      },
+    },
+  },
 )

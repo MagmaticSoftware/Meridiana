@@ -1,42 +1,110 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Typography */
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans:
+    'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* Geometric display face: thin to black, for big numerals and titles. */
+  --font-display:
+    'Outfit Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  /* Tall condensed face for dense, poster-like clocks. */
+  --font-condensed:
+    'Oswald Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
 
-  /* Warm neutral palette */
-  --color-surface-50: #fbfaf8;
-  --color-surface-100: #f4f1ec;
-  --color-surface-200: #e8e2d9;
-  --color-surface-300: #d6cdbf;
-  --color-surface-400: #b3a693;
-  --color-surface-500: #8c7c66;
-  --color-surface-600: #6b5d4a;
-  --color-surface-700: #4d4235;
-  --color-surface-800: #322a22;
-  --color-surface-900: #1c1712;
-  --color-surface-950: #100d0a;
+  --radius-card: clamp(1rem, 1.6vw, 1.75rem);
+  --radius-panel: 1.5rem;
 
-  --color-accent-100: #fbe7d7;
-  --color-accent-200: #f5c7a4;
-  --color-accent-300: #eda671;
-  --color-accent-400: #e2874a;
-  --color-accent-500: #d16b2c;
-  --color-accent-600: #ab5321;
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
 
-  /* Crisp, modern corners -- present but not pillowy */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.25rem;
+/*
+ * Semantic, tone-aware colors. Every widget and panel paints with these
+ * (text-ink, bg-tint, border-line, bg-accent…) instead of raw colors, so a
+ * single `data-tone` / `data-material` / `--accent` switch restyles the
+ * whole app consistently.
+ */
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-subtle: var(--ink-subtle);
+  --color-tint: var(--tint);
+  --color-tint-strong: var(--tint-strong);
+  --color-line: var(--line);
+  --color-night: var(--night);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+}
 
-  /* Defined, contemporary shadows */
-  --shadow-soft:
-    0 1px 2px rgba(16, 13, 10, 0.1), 0 4px 14px rgba(16, 13, 10, 0.14);
-  --shadow-soft-lg:
-    0 2px 6px rgba(16, 13, 10, 0.14), 0 16px 40px rgba(16, 13, 10, 0.24);
+:root,
+[data-tone='dark'] {
+  --ink: #f4f7fb;
+  --ink-muted: rgb(244 247 251 / 0.64);
+  --ink-subtle: rgb(244 247 251 / 0.34);
+  --tint: rgb(255 255 255 / 0.07);
+  --tint-strong: rgb(255 255 255 / 0.13);
+  --line: rgb(255 255 255 / 0.09);
+  --night: rgb(2 6 14 / 0.55);
+  --face: #070a10;
+  --face-ink: #f4f7fb;
+  --map-night-opacity: 0.7;
+
+  --card-bg: rgb(10 18 30 / 0.56);
+  --card-border: rgb(255 255 255 / 0.1);
+  --card-shadow:
+    0 1px 0 rgb(255 255 255 / 0.06) inset, 0 18px 50px -18px rgb(0 0 0 / 0.55);
+  --panel-bg: rgb(12 20 32 / 0.86);
+
+  color-scheme: dark;
+}
+
+/* Overridden at runtime from the appearance store (see app.vue). */
+:root {
+  --accent: #f68d42;
+  --accent-ink: #2a1203;
+}
+
+[data-tone='dark'][data-material='solid'] {
+  --card-bg: #0f1826;
+  --card-border: rgb(255 255 255 / 0.06);
+  --panel-bg: #101a29;
+}
+
+[data-tone='light'] {
+  --ink: #0f1a2a;
+  --ink-muted: rgb(15 26 42 / 0.6);
+  --ink-subtle: rgb(15 26 42 / 0.34);
+  --tint: rgb(15 26 42 / 0.05);
+  --tint-strong: rgb(15 26 42 / 0.09);
+  --line: rgb(15 26 42 / 0.08);
+  --night: rgb(10 22 38 / 0.86);
+  --face: #ffffff;
+  --face-ink: #0f1a2a;
+  --map-night-opacity: 0.22;
+
+  --card-bg: rgb(255 255 255 / 0.72);
+  --card-border: rgb(255 255 255 / 0.75);
+  --card-shadow:
+    0 1px 0 rgb(255 255 255 / 0.9) inset, 0 18px 50px -20px rgb(10 30 60 / 0.35);
+  --panel-bg: rgb(250 251 253 / 0.92);
+
+  color-scheme: light;
+}
+
+[data-tone='light'][data-material='solid'] {
+  --card-bg: #ffffff;
+  --panel-bg: #ffffff;
+}
+
+/* Widgets placed straight on the background: light ink with a soft shadow. */
+.frame-clear {
+  --ink: #ffffff;
+  --ink-muted: rgb(255 255 255 / 0.78);
+  --ink-subtle: rgb(255 255 255 / 0.5);
+  --tint: rgb(255 255 255 / 0.12);
+  --tint-strong: rgb(255 255 255 / 0.18);
+  --line: rgb(255 255 255 / 0.18);
+  --face: rgb(7 10 16 / 0.6);
+  --face-ink: #ffffff;
+  text-shadow: 0 1px 14px rgb(0 0 0 / 0.35);
 }
 
 html,
@@ -46,8 +114,101 @@ body,
 }
 
 body {
+  margin: 0;
   font-family: var(--font-sans);
-  background-color: var(--color-surface-950);
-  color: var(--color-surface-50);
+  background-color: #0a1626;
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+@layer components {
+  .widget-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+  }
+
+  [data-material='glass'] .widget-card,
+  [data-material='glass'] .ui-panel {
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+  }
+
+  .ui-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-panel);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.06) inset,
+      0 24px 60px -16px rgb(0 0 0 / 0.5);
+    color: var(--ink);
+  }
+
+  .ui-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-subtle);
+  }
+
+  .ui-input {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid var(--line);
+    background: var(--tint);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .ui-input:focus {
+    border-color: var(--accent);
+  }
+
+  .ui-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    color: var(--ink-muted);
+    transition:
+      background-color 0.15s,
+      color 0.15s,
+      transform 0.15s;
+  }
+
+  .ui-icon-button:hover {
+    background: var(--tint-strong);
+    color: var(--ink);
+  }
+
+  .ui-icon-button:active {
+    transform: scale(0.94);
+  }
+
+  input[type='range'].ui-range {
+    accent-color: var(--accent);
+    width: 100%;
+  }
+}
+
+/* Thin, unobtrusive scrollbars inside widgets and panels. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--tint-strong) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

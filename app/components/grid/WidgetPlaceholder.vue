@@ -1,6 +1,6 @@
 <template>
   <div
-    class="border-surface-600 text-surface-400 flex h-full w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed"
+    class="text-ink-subtle border-line flex h-full w-full items-center justify-center rounded-[var(--radius-card)] border border-dashed"
   >
     <span class="text-xs tracking-wide uppercase">{{ widgetId }}</span>
   </div>
